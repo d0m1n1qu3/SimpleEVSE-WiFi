@@ -608,9 +608,9 @@ uint8_t ICACHE_FLASH_ATTR EvseWiFiConfig::getMeterPin(uint8_t meterId) {
     #ifdef ESP8266
     return D3;
     #elif ESP32_DEVKIT
-    return 17;
+    return 5;
     #else
-    return 17;
+    return 5;
     #endif
 }
 uint16_t ICACHE_FLASH_ATTR EvseWiFiConfig::getMeterImpKwh(uint8_t meterId) {
@@ -676,9 +676,9 @@ uint8_t ICACHE_FLASH_ATTR EvseWiFiConfig::getButtonPin(uint8_t buttonId) {
     #ifdef ESP8266
     return D4;
     #elif ESP32_DEVKIT
-    return 16;
+    return 17;
     #else
-    return 16;
+    return 17;
     #endif
 }
 
@@ -759,7 +759,7 @@ float ICACHE_FLASH_ATTR EvseWiFiConfig::getEvseAvgConsumption(uint8_t evseId) {
     return 15.0;
 }
 uint8_t ICACHE_FLASH_ATTR EvseWiFiConfig::getEvseCpIntPin(uint8_t evseId) {
-    return 4;
+    return 14;
 }
 bool ICACHE_FLASH_ATTR EvseWiFiConfig::getEvseRseActive(uint8_t evseId) {
     return evseConfig[evseId].rseActive;
@@ -798,7 +798,7 @@ bool ICACHE_FLASH_ATTR EvseWiFiConfig::setEvseCurrentAfterBoot(uint8_t evseId, u
 
 // number of phases to switch through
 uint8_t ICACHE_FLASH_ATTR EvseWiFiConfig::getEvseNumPhasesPin(uint8_t evseId) {
-    return 32;
+    return 15;
 }
 
 bool ICACHE_FLASH_ATTR EvseWiFiConfig::setEvseNumPhases(uint8_t evseId, uint8_t numPhases) {

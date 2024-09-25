@@ -152,7 +152,7 @@ float voltageP3 = 0.0;
 SoftwareSerial SecondSer(D1, D2); // SoftwareSerial object (RX, TX)
 #else
 HardwareSerial FirstSer(1);
-HardwareSerial SecondSer(2);
+//HardwareSerial SecondSer(2);
 #ifdef OLED
 // oLED
 unsigned long millisUpdateOled = 0;
@@ -3231,8 +3231,8 @@ bool ICACHE_FLASH_ATTR loadConfiguration(String configString = "")
   evseNode.begin(1, SecondSer);
 #else
 
-  FirstSer.begin(9600, SERIAL_8N1, 22, 21);  // EVSE
-  SecondSer.begin(9600, SERIAL_8N1, 34, 14); // SDM
+  FirstSer.begin(9600, SERIAL_8N1, 32, 33);  // EVSE
+  //SecondSer.begin(9600, SERIAL_8N1, 34, 14); // SDM
 
 #ifdef OLED
   oled.showSplash("Connecting WiFi...");
@@ -3351,11 +3351,11 @@ bool ICACHE_FLASH_ATTR loadConfiguration(String configString = "")
     evseNode.begin(1, FirstSer);
     slog.logln(ntp.iso8601DateTime() + "[ Modbus ] EVSE detected at UART 1");
   }
-  else if (checkUart(&SecondSer, 1))
-  { // EVSE -> UART2
-    evseNode.begin(1, SecondSer);
-    slog.logln(ntp.iso8601DateTime() + "[ Modbus ] EVSE detected at UART 2");
-  }
+//  else if (checkUart(&SecondSer, 1))
+//  { // EVSE -> UART2
+//    evseNode.begin(1, SecondSer);
+//    slog.logln(ntp.iso8601DateTime() + "[ Modbus ] EVSE detected at UART 2");
+//  }
   else
   {
     noEVSE = true;
@@ -3369,11 +3369,11 @@ bool ICACHE_FLASH_ATTR loadConfiguration(String configString = "")
       meterNode.begin(2, FirstSer);
       slog.logln(ntp.iso8601DateTime() + "[ Modbus ] SDM detected at UART 1");
     }
-    else if (checkUart(&SecondSer, 2))
-    { // SDM -> UART2
-      meterNode.begin(2, SecondSer);
-      slog.logln(ntp.iso8601DateTime() + "[ Modbus ] SDM detected at UART 2");
-    }
+//    else if (checkUart(&SecondSer, 2))
+//    { // SDM -> UART2
+//      meterNode.begin(2, SecondSer);
+//      slog.logln(ntp.iso8601DateTime() + "[ Modbus ] SDM detected at UART 2");
+//    }
     else
     {
       noSDM = true;
@@ -4089,11 +4089,11 @@ void ICACHE_RAM_ATTR setup()
   SecondSer.begin(9600);
   meterNode.begin(2, Serial);
 #else
-  SecondSer.begin(9600, SERIAL_8N1, 22, 21);
-  meterNode.begin(2, SecondSer);
+//  SecondSer.begin(9600, SERIAL_8N1, 22, 21);
+//  meterNode.begin(2, SecondSer);
 #endif
 
-  evseNode.begin(1, SecondSer);
+//  evseNode.begin(1, SecondSer);
 
 #ifdef ESP32
 #ifdef OLED
@@ -4374,7 +4374,7 @@ void ICACHE_RAM_ATTR loop()
 #ifdef ESP8266
     buttonPin = D4;
 #else
-    buttonPin = 16;
+    buttonPin = 17;
 #endif
   }
   else
