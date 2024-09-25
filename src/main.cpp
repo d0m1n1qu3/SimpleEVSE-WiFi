@@ -3231,7 +3231,8 @@ bool ICACHE_FLASH_ATTR loadConfiguration(String configString = "")
   evseNode.begin(1, SecondSer);
 #else
 
-  FirstSer.begin(9600, SERIAL_8N1, 32, 33);  // EVSE
+//  FirstSer.begin(9600, SERIAL_8N1, 15, 14);  // EVSE
+    FirstSer.begin(9600, SERIAL_8N1, 22, 21);  // EVSE
   //SecondSer.begin(9600, SERIAL_8N1, 34, 14); // SDM
 
 #ifdef OLED
@@ -3456,12 +3457,14 @@ bool ICACHE_FLASH_ATTR loadConfiguration(String configString = "")
       slog.logln(ntp.iso8601DateTime() + "[ INFO ] EVSE-WiFi runs in always active mode");
   }
 
+#ifdef RFID
   if (config.getRfidActive() == true)
   { //&& config.getEvseAlwaysActive(0) == false) {
     if (config.getSystemDebug())
       slog.logln(ntp.iso8601DateTime() + "[ INFO ] Trying to setup RFID hardware");
     rfid.begin(config.getRfidPin(), config.getRfidUsePN532(), config.getRfidGain(), &ntp, config.getSystemDebug(), &slog);
   }
+#endif
 
   // Handle boot while charging is active
   if ((evseActive && !config.getEvseAlwaysActive(0)) || (vehicleCharging && config.getEvseAlwaysActive(0)))

@@ -608,9 +608,9 @@ uint8_t ICACHE_FLASH_ATTR EvseWiFiConfig::getMeterPin(uint8_t meterId) {
     #ifdef ESP8266
     return D3;
     #elif ESP32_DEVKIT
-    return 5;
+    return 4;
     #else
-    return 5;
+    return 4;
     #endif
 }
 uint16_t ICACHE_FLASH_ATTR EvseWiFiConfig::getMeterImpKwh(uint8_t meterId) {
@@ -648,7 +648,7 @@ uint8_t ICACHE_FLASH_ATTR EvseWiFiConfig::getRfidPin() {
     #ifdef ESP8266
     return D8;
     #else
-    return 5;
+    return 4;
     #endif
 }
 int8_t ICACHE_FLASH_ATTR EvseWiFiConfig::getRfidGain() {
@@ -676,9 +676,9 @@ uint8_t ICACHE_FLASH_ATTR EvseWiFiConfig::getButtonPin(uint8_t buttonId) {
     #ifdef ESP8266
     return D4;
     #elif ESP32_DEVKIT
-    return 17;
+    return 4;
     #else
-    return 17;
+    return 4;
     #endif
 }
 
@@ -743,9 +743,9 @@ uint8_t ICACHE_FLASH_ATTR EvseWiFiConfig::getEvseLedPin(uint8_t evseId) {
     #ifdef ESP8266
     return D0;
     #elif ESP32_DEVKIT
-    return 2;
+    return 4;
     #else
-    return 26;
+    return 4;
     #endif
 }
 bool ICACHE_FLASH_ATTR EvseWiFiConfig::getEvseResetCurrentAfterCharge(uint8_t evseId) {
@@ -759,16 +759,16 @@ float ICACHE_FLASH_ATTR EvseWiFiConfig::getEvseAvgConsumption(uint8_t evseId) {
     return 15.0;
 }
 uint8_t ICACHE_FLASH_ATTR EvseWiFiConfig::getEvseCpIntPin(uint8_t evseId) {
-    return 14;
+    return 4;
 }
 bool ICACHE_FLASH_ATTR EvseWiFiConfig::getEvseRseActive(uint8_t evseId) {
     return evseConfig[evseId].rseActive;
 }
 uint8_t ICACHE_FLASH_ATTR EvseWiFiConfig::getEvseRsePin(uint8_t evseId) {
     #ifdef ESP32_DEVKIT
-        return 34;
+        return 4;
     #else
-        return 2;
+        return 4;
     #endif
 }
 uint8_t ICACHE_FLASH_ATTR EvseWiFiConfig::getEvseRseValue(uint8_t evseId) {
@@ -798,7 +798,7 @@ bool ICACHE_FLASH_ATTR EvseWiFiConfig::setEvseCurrentAfterBoot(uint8_t evseId, u
 
 // number of phases to switch through
 uint8_t ICACHE_FLASH_ATTR EvseWiFiConfig::getEvseNumPhasesPin(uint8_t evseId) {
-    return 15;
+    return 4;
 }
 
 bool ICACHE_FLASH_ATTR EvseWiFiConfig::setEvseNumPhases(uint8_t evseId, uint8_t numPhases) {
