@@ -12,7 +12,11 @@
 #include <ESP8266WiFi.h>
 #include <ESPAsyncUDP.h>
 #else
+#ifdef USE_ETH
+#include <ETH.h>
+#else
 #include <WiFi.h>
+#endif
 #include <AsyncUDP.h>
 #endif
 

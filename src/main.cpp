@@ -22,7 +22,11 @@
 #include <SoftwareSerial.h> // Using GPIOs for Serial Modbus communication
 
 #else
+#ifdef USE_ETH
+#include <ETH.h>
+#else
 #include <WiFi.h>
+#endif
 #include <ESPmDNS.h>
 #include <SPIFFS.h>
 #include <HardwareSerial.h>
@@ -31,7 +35,9 @@
 #include "esp_log.h"
 #include "esp_spiffs.h"
 #include "esp_wifi.h"
+#ifdef OLED
 #include "oled.h"
+#endif
 #endif
 
 #include <TimeLib.h>           // Library for converting epochtime to a date
@@ -152,7 +158,7 @@ float voltageP3 = 0.0;
 SoftwareSerial SecondSer(D1, D2); // SoftwareSerial object (RX, TX)
 #else
 HardwareSerial FirstSer(1);
-HardwareSerial SecondSer(2);
+// HardwareSerial SecondSer(2);
 #ifdef OLED
 // oLED
 unsigned long millisUpdateOled = 0;
@@ -3231,8 +3237,13 @@ bool ICACHE_FLASH_ATTR loadConfiguration(String configString = "")
   evseNode.begin(1, SecondSer);
 #else
 
+#ifdef WT32
+  FirstSer.begin(9600, SERIAL_8N1, 5, 17);  // EVSE
+  // SecondSer.begin(9600, SERIAL_8N1, 34, 14); // SDM
+#else
   FirstSer.begin(9600, SERIAL_8N1, 22, 21);  // EVSE
-  SecondSer.begin(9600, SERIAL_8N1, 34, 14); // SDM
+  // SecondSer.begin(9600, SERIAL_8N1, 34, 14); // SDM
+#endif
 
 #ifdef OLED
   oled.showSplash("Connecting WiFi...");
@@ -3279,17 +3290,29 @@ bool ICACHE_FLASH_ATTR loadConfiguration(String configString = "")
     gateway.fromString(config.getWiFiGateway());
     dns.fromString(config.getWiFiDns());
 
+    #ifdef USE_ETH
+    ETH.config(clientip, gateway, subnet, dns);
+#else
     WiFi.config(clientip, gateway, subnet, dns);
+    #endif
   }
   else
   {
 #ifdef ESP32
+#ifdef USE_ETH
+    //ETH.config();
+#else
     WiFi.config(INADDR_NONE, INADDR_NONE, INADDR_NONE);
+#endif
 #endif
   }
 
 #ifdef ESP32
+#ifdef USE_ETH
+  ETH.setHostname(config.getSystemHostname());
+#else
   WiFi.setHostname(config.getSystemHostname());
+#endif
 #else
   WiFi.hostname(config.getSystemHostname());
 #endif
@@ -3297,7 +3320,12 @@ bool ICACHE_FLASH_ATTR loadConfiguration(String configString = "")
   byte bssid[6];
   parseBytes(config.getWifiBssid(), ':', bssid, 6, 16);
 
+
+#ifdef USE_ETH
+  if(ETH.begin());
+#else
   if (!connectSTA(config.getWifiSsid(), config.getWifiPass(), bssid))
+#endif
   {
     return false;
   }
@@ -3308,7 +3336,11 @@ bool ICACHE_FLASH_ATTR loadConfiguration(String configString = "")
 
   // slog.logln("");
   slog.log(ntp.iso8601DateTime() + "[ INFO ] Client IP address: ");
-  slog.logln(WiFi.localIP().toString());
+#ifdef USE_ETH
+slog.logln(ETH.localIP().toString());
+#else
+slog.logln(WiFi.localIP().toString());
+#endif
 
   // Check internet connection
   delay(100);
@@ -3316,7 +3348,11 @@ bool ICACHE_FLASH_ATTR loadConfiguration(String configString = "")
     slog.logln(ntp.iso8601DateTime() + "[ NTP ] NTP Server - set up NTP");
   const char *ntpserver = config.getNtpIp();
   IPAddress timeserverip;
-  WiFi.hostByName(ntpserver, timeserverip);
+#ifdef USE_ETH
+WiFi.hostByName(ntpserver, timeserverip);
+#else
+WiFi.hostByName(ntpserver, timeserverip);
+#endif
   String ip = printIP(timeserverip);
   if (config.getSystemDebug())
     slog.logln(ntp.iso8601DateTime() + "[ NTP ] IP: " + ip);
@@ -3351,11 +3387,11 @@ bool ICACHE_FLASH_ATTR loadConfiguration(String configString = "")
     evseNode.begin(1, FirstSer);
     slog.logln(ntp.iso8601DateTime() + "[ Modbus ] EVSE detected at UART 1");
   }
-  else if (checkUart(&SecondSer, 1))
-  { // EVSE -> UART2
-    evseNode.begin(1, SecondSer);
-    slog.logln(ntp.iso8601DateTime() + "[ Modbus ] EVSE detected at UART 2");
-  }
+  // else if (checkUart(&SecondSer, 1))
+  // { // EVSE -> UART2
+  //   evseNode.begin(1, SecondSer);
+  //   slog.logln(ntp.iso8601DateTime() + "[ Modbus ] EVSE detected at UART 2");
+  // }
   else
   {
     noEVSE = true;
@@ -3369,11 +3405,11 @@ bool ICACHE_FLASH_ATTR loadConfiguration(String configString = "")
       meterNode.begin(2, FirstSer);
       slog.logln(ntp.iso8601DateTime() + "[ Modbus ] SDM detected at UART 1");
     }
-    else if (checkUart(&SecondSer, 2))
-    { // SDM -> UART2
-      meterNode.begin(2, SecondSer);
-      slog.logln(ntp.iso8601DateTime() + "[ Modbus ] SDM detected at UART 2");
-    }
+    // else if (checkUart(&SecondSer, 2))
+    // { // SDM -> UART2
+    //   meterNode.begin(2, SecondSer);
+    //   slog.logln(ntp.iso8601DateTime() + "[ Modbus ] SDM detected at UART 2");
+    // }
     else
     {
       noSDM = true;
@@ -3455,14 +3491,14 @@ bool ICACHE_FLASH_ATTR loadConfiguration(String configString = "")
     if (config.getSystemDebug())
       slog.logln(ntp.iso8601DateTime() + "[ INFO ] EVSE-WiFi runs in always active mode");
   }
-
+#ifdef RFID
   if (config.getRfidActive() == true)
   { //&& config.getEvseAlwaysActive(0) == false) {
     if (config.getSystemDebug())
       slog.logln(ntp.iso8601DateTime() + "[ INFO ] Trying to setup RFID hardware");
     rfid.begin(config.getRfidPin(), config.getRfidUsePN532(), config.getRfidGain(), &ntp, config.getSystemDebug(), &slog);
   }
-
+#endif
   // Handle boot while charging is active
   if ((evseActive && !config.getEvseAlwaysActive(0)) || (vehicleCharging && config.getEvseAlwaysActive(0)))
   {
@@ -4088,12 +4124,12 @@ void ICACHE_RAM_ATTR setup()
 #ifdef ESP8266
   SecondSer.begin(9600);
   meterNode.begin(2, Serial);
-#else
-  SecondSer.begin(9600, SERIAL_8N1, 22, 21);
-  meterNode.begin(2, SecondSer);
+// #else
+//   SecondSer.begin(9600, SERIAL_8N1, 22, 21);
+//   meterNode.begin(2, SecondSer);
 #endif
 
-  evseNode.begin(1, SecondSer);
+  // evseNode.begin(1, SecondSer);
 
 #ifdef ESP32
 #ifdef OLED
@@ -4311,7 +4347,7 @@ void ICACHE_RAM_ATTR loop()
   {
     setEVSEcurrent();
   }
-
+#ifndef USE_ETH
   if (wifiInterrupted && reconnectTimer < millis())
   {
     reconnectTimer = millis() + 30000; // 30 seconds
@@ -4331,7 +4367,7 @@ void ICACHE_RAM_ATTR loop()
     }
     wifiInterrupted = false;
   }
-
+#endif
   if (config.getButtonActive(0) && digitalRead(config.getButtonPin(0)) == HIGH && buttonState == LOW)
   {
     delay(100);
@@ -4373,6 +4409,8 @@ void ICACHE_RAM_ATTR loop()
   {
 #ifdef ESP8266
     buttonPin = D4;
+#elif WT32
+    buttonPin = 39;
 #else
     buttonPin = 16;
 #endif

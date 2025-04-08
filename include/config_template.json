@@ -23,7 +23,7 @@
     }
   ],
   "rfid": {
-    "userfid": true,
+    "userfid": false,
     "rfidgain": 32
   },
   "ntp": {

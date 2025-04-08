@@ -1,18 +1,19 @@
-PIN        ES8266 ESP32 base_1_045 DEVKIT
-LedPin         D0               26     2
-RX2            D1               22     22
-TX2            D2               21     21
-meterintpin    D3               17     17
-buttonPin      D4               16     16
-SCK            D5               18     18
-MISO           D6               19     19
-MOSI           D7               23     23
-getRfidPin/CS  D8                5      5
-CpIntPin       --                4      4
-RsePin         --                2     34
-OLED_CS        --               12     25
-OLED_DC        --               13     26
-OLED_RESET     --               33     33
-numPhasesPin   --               32     32
-SDM TX         --               34     34
-SDM RX         --               14     14
+PIN        ES8266 ESP32 base_1_045 DEVKIT WT32-ETH
+LedPin         D0               26      2       14
+RX2            D1               22     22        5
+TX2            D2               21     21       17
+meterintpin    D3               17     17       --
+buttonPin      D4               16     16       39
+SCK            D5               18     18       --
+MISO           D6               19     19       --
+MOSI           D7               23     23       --
+getRfidPin/CS  D8                5      5       --
+CpIntPin       --                4      4        4
+RsePin         --                2     34       36
+OLED_CS        --               12     25       --
+OLED_DC        --               13     26       --
+OLED_RESET     --               33     33       --
+numPhasesPin   --               32     32       32
+SDM TX         --               34     34       14
+SDM RX         --               14     14       35
+RGBLED                                          33

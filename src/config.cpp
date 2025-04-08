@@ -607,6 +607,8 @@ uint8_t ICACHE_FLASH_ATTR EvseWiFiConfig::getMeterPin(uint8_t meterId) {
     if (meterConfig[meterId].intpin) return meterConfig[meterId].intpin;
     #ifdef ESP8266
     return D3;
+    #elif WT32
+    return -1;
     #elif ESP32_DEVKIT
     return 17;
     #else
@@ -647,6 +649,8 @@ uint8_t ICACHE_FLASH_ATTR EvseWiFiConfig::getRfidPin() {
     if (rfidConfig.sspin) return rfidConfig.sspin;
     #ifdef ESP8266
     return D8;
+    #elif WT32
+    return -1;
     #else
     return 5;
     #endif
@@ -675,6 +679,8 @@ uint8_t ICACHE_FLASH_ATTR EvseWiFiConfig::getButtonPin(uint8_t buttonId) {
     if (buttonConfig[0].buttonpin) return buttonConfig[buttonId].buttonpin;
     #ifdef ESP8266
     return D4;
+    #elif WT32
+    return 39;
     #elif ESP32_DEVKIT
     return 16;
     #else
@@ -742,6 +748,8 @@ uint8_t ICACHE_FLASH_ATTR EvseWiFiConfig::getEvseDisplayRotation(uint8_t evseId)
 uint8_t ICACHE_FLASH_ATTR EvseWiFiConfig::getEvseLedPin(uint8_t evseId) {
     #ifdef ESP8266
     return D0;
+    #elif WT32
+    return 14;
     #elif ESP32_DEVKIT
     return 2;
     #else
@@ -765,7 +773,9 @@ bool ICACHE_FLASH_ATTR EvseWiFiConfig::getEvseRseActive(uint8_t evseId) {
     return evseConfig[evseId].rseActive;
 }
 uint8_t ICACHE_FLASH_ATTR EvseWiFiConfig::getEvseRsePin(uint8_t evseId) {
-    #ifdef ESP32_DEVKIT
+    #ifdef WT32
+        return 36;
+    #elif ESP32_DEVKIT
         return 34;
     #else
         return 2;
